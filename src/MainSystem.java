@@ -1,70 +1,49 @@
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class MainSystem {
-    public static void main(String[] args) throws FileNotFoundException {
-   
-
-    // Implementing try catch method
+    public static void main(String[] args) {
         try {
-        // Creating an object phoneBookReader of Scanner class to read the content of given file phonebook.txt
-            Scanner phoneBookReader = new Scanner(
-            new FileReader("src/phonebook.txt"));
-            while (phoneBookReader.hasNextLine()) {
-                String line = phoneBookReader.nextLine();
+            // Read from phonebook.txt
+            File phonebookFile = new File("src/phonebook.txt");
+            Scanner phonebookScanner = new Scanner(phonebookFile);
+            while (phonebookScanner.hasNextLine()) {
+                String line = phonebookScanner.nextLine();
                 System.out.println(line);
             }
+            phonebookScanner.close();
 
-            // Close the Scanner
-            phoneBookReader.close();   
+            // Read from instructions.txt and write to newRecords.txt
+            File instructionsFile = new File("src/instructions.txt");
+            File outputFile = new File("src/newRecords.txt");
+            Scanner instructionsScanner = new Scanner(instructionsFile);
+            PrintWriter outputWriter = new PrintWriter(outputFile);
 
-            // Creating an object  instructionReader to read the content of instructions.txt file 
-            BufferedReader instructionReader = new BufferedReader(new FileReader("src/instructions.txt"));
-        
-            String instruction;
-            FileWriter writer = new FileWriter("src/newRecords.txt");
-            while ((instruction = instructionReader.readLine()) != null) {
+            while (instructionsScanner.hasNextLine()) {
+                String instruction = instructionsScanner.nextLine();
                 if (instruction.startsWith("add")) {
-                    // Extract the record details from the instruction
                     String[] recordDetails = instruction.split(" ");
-                    for(int i=1;i<recordDetails.length;i++){
-                        String name = recordDetails[i];
-                        String phone = recordDetails[i];
-                        String email=recordDetails[i];
-                        String address=recordDetails[i];
-                        String birthday=recordDetails[i];
-    
-    
-                        // Write the new record to rewRecords.txt
-                        writer.write(name + " " + phone + email+address+birthday+"\n");
-                    }
-                   
+                    Record record = new Record();
+                    record.setName(recordDetails[1]);
+                    record.setPhone(recordDetails[2]);
+                    record.setEmail(recordDetails[3]);
+                    record.setAddress(recordDetails[4]);
+                    record.setBirthday(recordDetails[5]);
+
+                    outputWriter.println(record.getName());
+                    outputWriter.println(record.getPhone());
+                    outputWriter.println(record.getEmail());
+                    outputWriter.println(record.getAddress());
+                    outputWriter.println(record.getBirthday());
                 }
             }
 
-            // Close the FileWriter and Scanner
-            writer.close();
-            instructionReader.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred while processing the instructions: " + e.getMessage());
+            instructionsScanner.close();
+            outputWriter.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + e.getMessage());
         }
     }
-
-    private static void deleteRecord(FileWriter writer, String key, String value) throws IOException {
-        // Implement the logic to delete a record from the phonebook
-        System.out.println("Deleting record: " + key + " " + value);
-    }
-
-    private static void queryRecord(FileWriter writer, String key, String value) throws IOException {
-        // Implement the logic to query a record from the phonebook
-        System.out.println("Querying record: " + key + " " + value);
-    }
-
-        
-    }
+}

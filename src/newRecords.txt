@@ -1,78 +1,30 @@
-name namenamenamename
-Jo JoJoJoJo
-Bloggs; Bloggs;Bloggs;Bloggs;Bloggs;
-birthday birthdaybirthdaybirthdaybirthday
-08-07-1900; 08-07-1900;08-07-1900;08-07-1900;08-07-1900;
-phone phonephonephonephone
-88884444; 88884444;88884444;88884444;88884444;
-address addressaddressaddressaddress
-9001 9001900190019001
-Chester ChesterChesterChesterChester
-Crescent, Crescent,Crescent,Crescent,Crescent,
-Chatswood, Chatswood,Chatswood,Chatswood,Chatswood,
-NSW NSWNSWNSWNSW
-2057 2057205720572057
-email emailemailemailemail
-michael@fanfare.com.au; michael@fanfare.com.au;michael@fanfare.com.au;michael@fanfare.com.au;michael@fanfare.com.au;
-name namenamenamename
-Michael MichaelMichaelMichaelMichael
-Willianm; Willianm;Willianm;Willianm;Willianm;
-birthday birthdaybirthdaybirthdaybirthday
-01-4-1950; 01-4-1950;01-4-1950;01-4-1950;01-4-1950;
- 
- 
-address addressaddressaddressaddress
-37 37373737
-Barton BartonBartonBartonBarton
-Ave, Ave,Ave,Ave,Ave,
-Haberfield, Haberfield,Haberfield,Haberfield,Haberfield,
-NSW NSWNSWNSWNSW
-2045; 2045;2045;2045;2045;
-phone phonephonephonephone
-19876245 19876245198762451987624519876245
-name namenamenamename
-Linda LindaLindaLindaLinda
-Evans; Evans;Evans;Evans;Evans;
-birthday birthdaybirthdaybirthdaybirthday
-22-02-1996; 22-02-1996;22-02-1996;22-02-1996;22-02-1996;
- 
-phone phonephonephonephone
-135625; 135625;135625;135625;135625;
-email emailemailemailemail
-l.evans@gmail.com; l.evans@gmail.com;l.evans@gmail.com;l.evans@gmail.com;l.evans@gmail.com;
-address addressaddressaddressaddress
-119 119119119119
-Gibbes GibbesGibbesGibbesGibbes
-St, St,St,St,St,
-Rockdale, Rockdale,Rockdale,Rockdale,Rockdale,
-NSW NSWNSWNSWNSW
-2216 2216221622162216
-address addressaddressaddressaddress
-64 64646464
-Lennox LennoxLennoxLennoxLennox
-St, St,St,St,St,
-Rockdale, Rockdale,Rockdale,Rockdale,Rockdale,
-NSW NSWNSWNSWNSW
-2216; 2216;2216;2216;2216;
-name namenamenamename
-Barbara BarbaraBarbaraBarbaraBarbara
-Wilson; Wilson;Wilson;Wilson;Wilson;
-birthday birthdaybirthdaybirthdaybirthday
-3-01-1988; 3-01-1988;3-01-1988;3-01-1988;3-01-1988;
-phone phonephonephonephone
-0469832165; 0469832165;0469832165;0469832165;0469832165;
-email emailemailemailemail
-b.wilson@fanfare.com.au b.wilson@fanfare.com.aub.wilson@fanfare.com.aub.wilson@fanfare.com.aub.wilson@fanfare.com.au
-name namenamenamename
-Posephine PosephinePosephinePosephinePosephine
-Esmerelda EsmereldaEsmereldaEsmereldaEsmerelda
-Bloggs; Bloggs;Bloggs;Bloggs;Bloggs;
-birthday birthdaybirthdaybirthdaybirthday
-13-05-1980; 13-05-1980;13-05-1980;13-05-1980;13-05-1980;
-phone phonephonephonephone
-98765432 98765432987654329876543298765432
-name namenamenamename
-Jo JoJoJoJo
-Bloggs; Bloggs;Bloggs;Bloggs;Bloggs;
-birthday birthdaybirthdaybirthdaybirthday
-08-07-1900 08-07-190008-07-190008-07-190008-07-1900
+name
+Jo
+Bloggs;
+birthday
+08-07-1900;
+email
+michael@fanfare.com.au;
+name
+Michael
+Willianm;
+name
+Linda
+Evans;
+birthday
+22-02-1996;
+address
+64
+Lennox
+St,
+Rockdale,
+name
+Posephine
+Esmerelda
+Bloggs;
+birthday
+name
+Jo
+Bloggs;
+birthday
+08-07-1900
