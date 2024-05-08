@@ -1,37 +1,6 @@
-name James Smith
-birthday 23-3-1989
-address 60 Morris St, Summer Hill, NSW 2130
-
-name Posephine Esmerelda Bloggs
-birthday 13-05-1980
-phone 16549853
-email j.e.bloggs@gmail.com
-address 102 Smith St, Summer hill, NSW 2130
-
-address 2 Fairmount St, Dulwich Hill, NSW 2203
-name John Jones
-birthday 18-09-1968
-phone 13649852
-
-email robert.taylor@gmail.com
-address 36 Carrington St, Summer Hill, NSW 2130
-name Robert Taylor
-birthday 3-6-2008
-
-name Posephine Esmerelda Bloggs
-birthday 13-05-1980
-phone 16549853
-email j.e.bloggs@gmail.com
-address 102 Smith St, Summer hill, NSW 2130
-
-name James Smith
-birthday 23-3-1989
-phone 98765425
-email j.smith@gmail.com
-address 60 Morris St, Summer Hill, NSW 2130
-
-name John Jones
-birthday 18-09-1968
-phone 13649852
-email j.jones@fanfare.com.au
-address 2 Fairmount St, Dulwich Hill, NSW 2203
+name Jo
+email michael@fanfare.com.au;
+name Linda
+address 64
+name Posephine
+name Jo
