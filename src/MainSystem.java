@@ -3,7 +3,11 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+// import java.nio.file.Files;
+// import java.nio.file.StandardCopyOption;
 
 public class MainSystem {
     // The function main is declared as public and static so that it can be accessed for anywhere in the program and it doesnot require any instance of the class to be created
@@ -33,7 +37,7 @@ public class MainSystem {
                         addRecord(phonebookFile,inputScanner);
                         break;
                     case 2:
-                        deleteRecord(inputScanner, phonebookFile,outputFile);
+                        deleteRecord(inputScanner, phonebookFile);
                         break;
                     case 3:
                         queryRecords(phonebookFile);
@@ -51,63 +55,100 @@ public class MainSystem {
             System.out.println("File not found: " + e.getMessage());
         }
     }
-// Here is the method to add new data to the existing file
-    private static void addRecord(File phonebookFile, Scanner inputScanner) throws FileNotFoundException {
-        System.out.println("Enter record details (name, phone, email, address, birthday):");
-    //   These below lines of code will prompt the user to enter the record of details
-        String name = inputScanner.nextLine();
-        String phone = inputScanner.nextLine();
-        String email = inputScanner.nextLine();
-        String address = inputScanner.nextLine();
-        String birthday = inputScanner.nextLine();
-    //    An object outputFile of class PrintWriter is created and is initialized with a FileWriter object and the argument inside FileWriter is made true so that it will open the file in append mode.
-        try (PrintWriter outputWriter = new PrintWriter(new FileWriter(phonebookFile, true))) {
+// Here is the method to add new data to the existing file(phonebook.txt)
+private static void addRecord(File phonebookFile, Scanner inputScanner) throws FileNotFoundException {
+    System.out.println("Enter record details (name, birthday (yyyy-mm-dd), phone, address):");
+    String name = inputScanner.nextLine();
+    String birthday = inputScanner.nextLine();
+    String phone = inputScanner.nextLine();
+    String address = inputScanner.nextLine();
 
-            // If the above condition is satisfis then the below statement is executedelse it will execute the statement inside catch block
-            outputWriter.println(name + "," + phone + "," + email + "," + address + "," + birthday);
-        } catch (IOException e) {
-            System.out.println("An error occurred while writing to the file: " + e.getMessage());
-        }
-        System.out.println("Record added successfully.");
-    }
+    List<String> lines = new ArrayList<>();
+    boolean recordFound = false;
 
-    private static void deleteRecord( Scanner inputScanner, File phonebookFile, File outputFile)  throws FileNotFoundException {
+    try (Scanner fileScanner = new Scanner(phonebookFile)) {
+        while (fileScanner.hasNextLine()) {
+            String line = fileScanner.nextLine();
+            String[] fields = line.split(",");
 
-        // File deletedRecordFile = new File("src/deletedRecordFile.txt");
-        System.out.println("Enter the name of the record you want to delete:");
-        String nameToDelete = inputScanner.nextLine();
-        Scanner phonebookScanner = new Scanner(phonebookFile);
-        PrintWriter outputWriter = new PrintWriter(outputFile);       
+            if (fields.length == 5) {
+                String existingName = fields[0];
+                String existingBirthday = fields[4];
 
-        boolean notRecordFound = true;
-        // System.out.println(notRecordFound);
-        while (phonebookScanner.hasNextLine()) {
-            String name = phonebookScanner.nextLine();
-            String phone = phonebookScanner.nextLine();
-            String email = phonebookScanner.nextLine();
-            String address = phonebookScanner.nextLine();
-            String birthday = phonebookScanner.nextLine();
-
-            if (!name.equals(nameToDelete)) {
-                outputWriter.println(name);
-                outputWriter.println(phone);
-                outputWriter.println(email);
-                outputWriter.println(address);
-                outputWriter.println(birthday);
-            } else {
-                notRecordFound = false;
-                System.out.println("Record deleted: " + name);
+                if (existingName.equalsIgnoreCase(name) && existingBirthday.equals(birthday)) {
+                    String updatedRecord = String.join(",", name, phone, fields[2], address, birthday);
+                    lines.add(updatedRecord);
+                    recordFound = true;
+                    System.out.println("Record updated successfully.");
+                } else {
+                    lines.add(line);
+                }
             }
         }
 
-        if (notRecordFound) {
-            System.out.println("Record not found.");
+        if (!recordFound) {
+            String newRecord = String.join(",", name, phone, "", address, birthday);
+            lines.add(newRecord);
+            System.out.println("New record added successfully.");
         }
-
-        phonebookScanner.close();
-        outputWriter.close();
+    } catch (IOException e) {
+        System.out.println("An error occurred while reading the file: " + e.getMessage());
     }
 
+    try (PrintWriter writer = new PrintWriter(new FileWriter(phonebookFile, false))) {
+        for (String line : lines) {
+            writer.println(line);
+        }
+    } catch (IOException e) {
+        System.out.println("An error occurred while writing to the file: " + e.getMessage());
+    }
+}
+// Here is the method to delete  data to the existing file(phonebook.txt) using name and birthday
+private static void deleteRecord(Scanner inputScanner, File phonebookFile) throws IOException {
+    System.out.println("Enter the name of the record to delete:");
+    String nameToDelete = inputScanner.nextLine();
+
+    System.out.println("Enter the birthday of the record to delete (yyyy-mm-dd):");
+    String birthdayToDelete = inputScanner.nextLine();
+
+    List<String> lines = new ArrayList<>();
+    boolean recordFound = false;
+
+    try (Scanner fileScanner = new Scanner(phonebookFile)) {
+        while (fileScanner.hasNextLine()) {
+            String line = fileScanner.nextLine();
+            String[] fields = line.split(",");
+
+            if (fields.length == 5) {
+                String name = fields[0];
+                String birthday = fields[4];
+
+                if (!name.equalsIgnoreCase(nameToDelete) || !birthday.equals(birthdayToDelete)) {
+                    lines.add(line);
+                } else {
+                    recordFound = true;
+                    System.out.println("Record deleted: " + line);
+                }
+            }
+        }
+
+        if (!recordFound) {
+            System.out.println("Record not found.");
+        }
+    } catch (IOException e) {
+        System.out.println("An error occurred while deleting the record: " + e.getMessage());
+    }
+
+    if (recordFound) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(phonebookFile, false))) {
+            for (String line : lines) {
+                writer.println(line);
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the file: " + e.getMessage());
+        }
+    }
+}
     private static void queryRecords(File phonebookFile) throws FileNotFoundException {
         Scanner phonebookScanner = new Scanner(phonebookFile);
         while (phonebookScanner.hasNextLine()) {
