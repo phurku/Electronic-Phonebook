@@ -117,7 +117,7 @@ public class MainSystem {
                 contacts.add(contact);
                 System.out.println("Contact added: " + name+birthday+email+address+phone);
         
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/phonebook.txt", true))) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/file.txt", true))) {
                     writer.write(name);
                     writer.newLine();
                     writer.write(birthday);
@@ -145,15 +145,6 @@ public class MainSystem {
             }
         }
         
-      private static void clearFile() throws IOException {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/file.txt", false))) {
-                // Clear the file by not writing anything
-            } catch (IOException e) {
-                System.out.println("Error clearing file: " + e.getMessage());
-            }
-        }
-        
-    
         private static boolean isValidEmailAddress(String email) {
             String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
             Pattern pattern = Pattern.compile(emailRegex);
@@ -161,40 +152,140 @@ public class MainSystem {
         }
     
         private static boolean isValidPhoneNumber(String phone) {
-            String phoneRegex = "^\\d{8}$"; // Assuming a 10-digit phone number format
+            String phoneRegex = "^(\\+\\d{1,3}[- ]?)?\\d{1,4}?[- ]?\\d{3,4}[- ]?\\d{3,4}$";
             Pattern pattern = Pattern.compile(phoneRegex);
             return pattern.matcher(phone).matches();
         }
-    
         private static void deleteContact(String details) {
-            // Implementation for deleting a contact
-            System.out.println("Invalid delete instruction: " + details);
+            String[] parts = details.split(";");
+            if (parts.length >= 2) {
+                String name = parts[0].trim();
+                String birthday = parts[1].trim();
+        
+                Iterator<Contact> iterator = contacts.iterator();
+                boolean contactFound = false;
+                while (iterator.hasNext()) {
+                    Contact contact = iterator.next();
+                    if (contact.getName().equalsIgnoreCase(name) && contact.getBirthday().equals(birthday)) {
+                        iterator.remove();
+                        System.out.println("Contact deleted: " + name+ birthday);
+                        contactFound = true;
+        
+                        // Write the deleted contact to the deleted.txt file
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/deletedRecords.txt", true))) {
+                            writer.write(name);
+                            writer.newLine();
+                            writer.write(birthday);
+                            writer.newLine();
+                            if (contact.getEmail() != null) {
+                                writer.write(contact.getEmail());
+                                writer.newLine();
+                            }
+                            if (contact.getAddress() != null) {
+                                writer.write(contact.getAddress());
+                                writer.newLine();
+                            }
+                            if (contact.getPhone() != null) {
+                                writer.write(contact.getPhone());
+                                writer.newLine();
+                            }
+                            writer.write("---");
+                            writer.newLine();
+                            writer.flush();
+                        } catch (IOException e) {
+                            System.out.println("Error writing to deleted.txt: " + e.getMessage());
+                        }
+                    }
+                }
+        
+                if (!contactFound) {
+                    System.out.println("Contact not found: " + name + ", " + birthday);
+                }
+            } else {
+                System.out.println("Invalid delete instruction: " + details);
+            }
         }
     
+
         private static void processQueryInstruction(String details) {
-            // Implementation for processing query instructions
-            System.out.println("Invalid query instruction: " + details);
+            String[] parts = details.split(" ");
+            if (parts.length == 2) {
+                String key = parts[0].trim().toLowerCase();
+                String value = parts[1].trim();
+                switch (key) {
+                    case "name":
+                        queryByName(value);
+                        break;
+                    case "birthday":
+                        queryByBirthday(value);
+                        break;
+                    case "phone":
+                        queryByPhone(value);
+                        break;
+                    default:
+                        System.out.println("Invalid query instruction: " + details);
+                }
+            } else {
+                System.out.println("Invalid query instruction: " + details);
+            }
         }
         
-    // ... (deleteContact, queryContact, printContactDetails, and saveContacts methods remain the same)
-
-    
-
-    private static void printContactDetails(Contact contact) {
-        System.out.println("Contact found: " + contact.getName() + ", " + contact.getBirthday() + ", " + contact.getEmail() + ", " + contact.getAddress() + ", " + contact.getPhone());
-    }}
-
-//     private static void saveContacts() {
-//         try {
-//             BufferedWriter writer = new BufferedWriter(new FileWriter("src/contacts.txt", true));
-//             for (Contact contact : contacts) {
-//                 writer.write(contact.getName() + ":" + contact.getBirthday().format(DateTimeFormatter.ISO_LOCAL_DATE) + ":" + contact.getEmail() + ":" + contact.getAddress() + ":" + contact.getPhone());
-//                 writer.newLine(); // Move to the next line
-//             }
-//             writer.close();
-//             System.out.println("Contacts saved successfully.");
-//         } catch (IOException e) {
-//             System.err.println("Error saving contacts: " + e.getMessage());
-//         }
-//     }
-// }
+        private static void queryByName(String name) {
+            boolean found = false;
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/query_results.txt", true))) {
+                for (Contact contact : contacts) {
+                    if (contact.getName().equalsIgnoreCase(name)) {
+                        printContactDetails(contact, writer);
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    writer.write("No contact found with name: " + name);
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                System.out.println("Error writing query results: " + e.getMessage());
+            }
+        }
+        
+        private static void queryByBirthday(String birthday) {
+            boolean found = false;
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/query_results.txt", true))) {
+                for (Contact contact : contacts) {
+                    if (contact.getBirthday().equals(birthday)) {
+                        printContactDetails(contact, writer);
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    writer.write("No contact found with birthday: " + birthday);
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                System.out.println("Error writing query results: " + e.getMessage());
+            }
+        }
+        
+        private static void queryByPhone(String phone) {
+            boolean found = false;
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/query_results.txt", true))) {
+                for (Contact contact : contacts) {
+                    if (contact.getPhone() != null && contact.getPhone().equals(phone)) {
+                        printContactDetails(contact, writer);
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    writer.write("No contact found with phone number: " + phone);
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                System.out.println("Error writing query results: " + e.getMessage());
+            }
+        }
+        
+        private static void printContactDetails(Contact contact, BufferedWriter writer) throws IOException {
+            writer.write("Contact found: " + contact.getName() + ", " + contact.getBirthday() + ", " + contact.getEmail() + ", " + contact.getAddress() + ", " + contact.getPhone());
+            writer.newLine();
+        }
+    }        
