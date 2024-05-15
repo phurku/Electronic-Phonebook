@@ -67,58 +67,76 @@ public class MainSystem {
                 System.out.println("Invalid instruction: " + instruction);
             }
         }
-        
         private static void addContact(String details) throws IOException {
             String[] parts = details.split(";");
-            System.out.println(parts.length);
-            if (parts.length >= 1) {
-                String name = parts[0].trim();
-                String birthday = parts[1].trim();
-                
+            String name = null;
+            String birthday = null;
+            String email = null;
+            String address = null;
+            String phone = null;
         
-                String email = null;
-                String address = null;
-                String phone = null;
-        
-                for (int i = 1; i < parts.length; i++) {
-                    String detail = parts[i].trim();
-                    if (isValidEmailAddress(detail)) {
-                        email = detail;
-                    } else if (isValidPhoneNumber(detail)) {
-                        phone = detail;
-                    } else {
-                        address = detail;
+            for (String part : parts) {
+                String[] keyValue = part.trim().split(" ", 2);
+                if (keyValue.length == 2) {
+                    String key = keyValue[0].trim().toLowerCase();
+                    String value = keyValue[1].trim();
+                    switch (key) {
+                        case "name":
+                            name = value;
+                            break;
+                        case "birthday":
+                            birthday = value;
+                            break;
+                        case "email":
+                            if (isValidEmailAddress(value)) {
+                                email = value;
+                            } else {
+                                System.out.println("Invalid email address: " + value);
+                            }
+                            break;
+                        case "address":
+                            address = value;
+                            break;
+                        case "phone":
+                            if (isValidPhoneNumber(value)) {
+                                phone = value;
+                            } else {
+                                System.out.println("Invalid phone number: " + value);
+                            }
+                            break;
+                        default:
+                            System.out.println("Invalid key: " + key);
                     }
+                } else {
+                    System.out.println("Invalid format: " + part);
                 }
+            }
         
+            if (name != null && birthday != null) {
                 Contact contact = new Contact(name, birthday, email, address, phone);
                 contacts.add(contact);
                 System.out.println("Contact added: " + name+birthday+email+address+phone);
-                System.out.println("Testing");
-
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/file.txt", true))) {
-                    writer.write( name);
+        
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/phonebook.txt", true))) {
+                    writer.write(name);
                     writer.newLine();
-
-                    if (birthday != null) {
-                        writer.write(birthday);
-                        writer.newLine();
-                    }
+                    writer.write(birthday);
+                    writer.newLine();
                     if (email != null) {
-                        writer.write( email);
+                        writer.write(email);
                         writer.newLine();
                     }
                     if (address != null) {
-                        writer.write( address);
+                        writer.write(address);
                         writer.newLine();
                     }
                     if (phone != null) {
-                        writer.write( phone);
+                        writer.write(phone);
                         writer.newLine();
                     }
                     writer.write("---");
                     writer.newLine();
-                    writer.flush(); // Flush the writer to ensure all data is written to the file
+                    writer.flush();
                 } catch (IOException e) {
                     System.out.println("Error writing to file: " + e.getMessage());
                 }
@@ -127,7 +145,7 @@ public class MainSystem {
             }
         }
         
-        private static void clearFile() throws IOException {
+      private static void clearFile() throws IOException {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/file.txt", false))) {
                 // Clear the file by not writing anything
             } catch (IOException e) {
