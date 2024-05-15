@@ -1,160 +1,182 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-// import java.nio.file.Files;
-// import java.nio.file.StandardCopyOption;
+import java.util.*;
+import java.util.regex.Pattern;
+
 
 public class MainSystem {
-    // The function main is declared as public and static so that it can be accessed for anywhere in the program and it doesnot require any instance of the class to be created
-    public static void main(String[] args) throws IOException {
-        try {
-            // File objects are created
-            File phonebookFile = new File("src/phonebook.txt");
-            File instructionsFile = new File("src/instructions.txt");
-            File outputFile = new File("src/newDataRecords.txt");
-// inputScanner object of class Scanner is create to read the user input
-            Scanner inputScanner = new Scanner(System.in);
-            // boolean variable exit is initialized to false to control the loop
-            boolean exit = false;
-// This is the main loop of the program which will run until the user chooses to exit
-            while (!exit) {
-                System.out.println("Choose an option:");
-                System.out.println("1. Add record");
-                System.out.println("2. Delete record");
-                System.out.println("3. Query records");
-                System.out.println("4. Exit");
+    private static List<Contact> contacts = new ArrayList<>();
 
-                int choice = inputScanner.nextInt();
-                inputScanner.nextLine(); // Consume the newline character
-
-                switch (choice) {
-                    case 1:
-                        addRecord(phonebookFile,inputScanner);
+        private static Scanner scanner = new Scanner(System.in);
+    
+        public static void main(String[] args) {
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader("src/instructions.txt"));
+                String instruction;
+                while ((instruction = reader.readLine()) != null) {
+                    processInstruction(instruction);
+                }
+                reader.close();
+            } catch (IOException e) {
+                System.err.println("Error reading instructions file: " + e.getMessage());
+            }
+        }
+        private static void processInstruction(String instruction) throws IOException {
+            String[] parts = instruction.split(" ");
+            if (parts.length > 0) {
+                String command = parts[0].trim().toLowerCase();
+                switch (command) {
+                    case "add":
+                        if (parts.length > 1) {
+                            String details = String.join(" ", parts).substring(4);
+                            if (details.split(";").length >= 2) {
+                                addContact(details);
+                            } else {
+                                System.out.println("Invalid add instruction: " + instruction);
+                            }
+                        } else {
+                            System.out.println("Invalid add instruction: " + instruction);
+                        }
                         break;
-                    case 2:
-                        deleteRecord(inputScanner, phonebookFile);
+                    case "delete":
+                        if (parts.length > 1) {
+                            String details = String.join(" ", parts).substring(7);
+                            deleteContact(details);
+                        } else {
+                            System.out.println("Invalid delete instruction: " + instruction);
+                        }
                         break;
-                    case 3:
-                        queryRecords(phonebookFile);
+                    case "query":
+                        if (parts.length > 1) {
+                            String details = String.join(" ", parts).substring(6);
+                            processQueryInstruction(details);
+                        } else {
+                            System.out.println("Invalid query instruction: " + instruction);
+                        }
                         break;
-                    case 4:
-                        exit = true;
+                    case "save":
+                        // saveContacts();
                         break;
                     default:
-                        System.out.println("Invalid choice. Please try again.");
+                        System.out.println("Invalid instruction: " + instruction);
                 }
+            } else {
+                System.out.println("Invalid instruction: " + instruction);
             }
-
-            inputScanner.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + e.getMessage());
         }
-    }
-// Here is the method to add new data to the existing file(phonebook.txt)
-private static void addRecord(File phonebookFile, Scanner inputScanner) throws FileNotFoundException {
-    System.out.println("Enter record details (name, birthday (yyyy-mm-dd), phone, address):");
-    String name = inputScanner.nextLine();
-    String birthday = inputScanner.nextLine();
-    String phone = inputScanner.nextLine();
-    String address = inputScanner.nextLine();
-
-    List<String> lines = new ArrayList<>();
-    boolean recordFound = false;
-
-    try (Scanner fileScanner = new Scanner(phonebookFile)) {
-        while (fileScanner.hasNextLine()) {
-            String line = fileScanner.nextLine();
-            String[] fields = line.split(",");
-
-            if (fields.length == 5) {
-                String existingName = fields[0];
-                String existingBirthday = fields[4];
-
-                if (existingName.equalsIgnoreCase(name) && existingBirthday.equals(birthday)) {
-                    String updatedRecord = String.join(",", name, phone, fields[2], address, birthday);
-                    lines.add(updatedRecord);
-                    recordFound = true;
-                    System.out.println("Record updated successfully.");
-                } else {
-                    lines.add(line);
+        
+        private static void addContact(String details) throws IOException {
+            String[] parts = details.split(";");
+            System.out.println(parts.length);
+            if (parts.length >= 1) {
+                String name = parts[0].trim();
+                String birthday = parts[1].trim();
+                
+        
+                String email = null;
+                String address = null;
+                String phone = null;
+        
+                for (int i = 1; i < parts.length; i++) {
+                    String detail = parts[i].trim();
+                    if (isValidEmailAddress(detail)) {
+                        email = detail;
+                    } else if (isValidPhoneNumber(detail)) {
+                        phone = detail;
+                    } else {
+                        address = detail;
+                    }
                 }
-            }
-        }
+        
+                Contact contact = new Contact(name, birthday, email, address, phone);
+                contacts.add(contact);
+                System.out.println("Contact added: " + name+birthday+email+address+phone);
+                System.out.println("Testing");
 
-        if (!recordFound) {
-            String newRecord = String.join(",", name, phone, "", address, birthday);
-            lines.add(newRecord);
-            System.out.println("New record added successfully.");
-        }
-    } catch (IOException e) {
-        System.out.println("An error occurred while reading the file: " + e.getMessage());
-    }
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/file.txt", true))) {
+                    writer.write( name);
+                    writer.newLine();
 
-    try (PrintWriter writer = new PrintWriter(new FileWriter(phonebookFile, false))) {
-        for (String line : lines) {
-            writer.println(line);
-        }
-    } catch (IOException e) {
-        System.out.println("An error occurred while writing to the file: " + e.getMessage());
-    }
-}
-// Here is the method to delete  data to the existing file(phonebook.txt) using name and birthday
-private static void deleteRecord(Scanner inputScanner, File phonebookFile) throws IOException {
-    System.out.println("Enter the name of the record to delete:");
-    String nameToDelete = inputScanner.nextLine();
-
-    System.out.println("Enter the birthday of the record to delete (yyyy-mm-dd):");
-    String birthdayToDelete = inputScanner.nextLine();
-
-    List<String> lines = new ArrayList<>();
-    boolean recordFound = false;
-
-    try (Scanner fileScanner = new Scanner(phonebookFile)) {
-        while (fileScanner.hasNextLine()) {
-            String line = fileScanner.nextLine();
-            String[] fields = line.split(",");
-
-            if (fields.length == 5) {
-                String name = fields[0];
-                String birthday = fields[4];
-
-                if (!name.equalsIgnoreCase(nameToDelete) || !birthday.equals(birthdayToDelete)) {
-                    lines.add(line);
-                } else {
-                    recordFound = true;
-                    System.out.println("Record deleted: " + line);
+                    if (birthday != null) {
+                        writer.write(birthday);
+                        writer.newLine();
+                    }
+                    if (email != null) {
+                        writer.write( email);
+                        writer.newLine();
+                    }
+                    if (address != null) {
+                        writer.write( address);
+                        writer.newLine();
+                    }
+                    if (phone != null) {
+                        writer.write( phone);
+                        writer.newLine();
+                    }
+                    writer.write("---");
+                    writer.newLine();
+                    writer.flush(); // Flush the writer to ensure all data is written to the file
+                } catch (IOException e) {
+                    System.out.println("Error writing to file: " + e.getMessage());
                 }
+            } else {
+                System.out.println("Invalid add instruction: " + details);
             }
         }
-
-        if (!recordFound) {
-            System.out.println("Record not found.");
-        }
-    } catch (IOException e) {
-        System.out.println("An error occurred while deleting the record: " + e.getMessage());
-    }
-
-    if (recordFound) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(phonebookFile, false))) {
-            for (String line : lines) {
-                writer.println(line);
+        
+        private static void clearFile() throws IOException {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/file.txt", false))) {
+                // Clear the file by not writing anything
+            } catch (IOException e) {
+                System.out.println("Error clearing file: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.out.println("An error occurred while writing to the file: " + e.getMessage());
         }
-    }
-}
-    private static void queryRecords(File phonebookFile) throws FileNotFoundException {
-        Scanner phonebookScanner = new Scanner(phonebookFile);
-        while (phonebookScanner.hasNextLine()) {
-            String line = phonebookScanner.nextLine();
-            System.out.println(line);
+        
+    
+        private static boolean isValidEmailAddress(String email) {
+            String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+            Pattern pattern = Pattern.compile(emailRegex);
+            return pattern.matcher(email).matches();
         }
-        phonebookScanner.close();
-    }
-}
+    
+        private static boolean isValidPhoneNumber(String phone) {
+            String phoneRegex = "^\\d{8}$"; // Assuming a 10-digit phone number format
+            Pattern pattern = Pattern.compile(phoneRegex);
+            return pattern.matcher(phone).matches();
+        }
+    
+        private static void deleteContact(String details) {
+            // Implementation for deleting a contact
+            System.out.println("Invalid delete instruction: " + details);
+        }
+    
+        private static void processQueryInstruction(String details) {
+            // Implementation for processing query instructions
+            System.out.println("Invalid query instruction: " + details);
+        }
+        
+    // ... (deleteContact, queryContact, printContactDetails, and saveContacts methods remain the same)
+
+    
+
+    private static void printContactDetails(Contact contact) {
+        System.out.println("Contact found: " + contact.getName() + ", " + contact.getBirthday() + ", " + contact.getEmail() + ", " + contact.getAddress() + ", " + contact.getPhone());
+    }}
+
+//     private static void saveContacts() {
+//         try {
+//             BufferedWriter writer = new BufferedWriter(new FileWriter("src/contacts.txt", true));
+//             for (Contact contact : contacts) {
+//                 writer.write(contact.getName() + ":" + contact.getBirthday().format(DateTimeFormatter.ISO_LOCAL_DATE) + ":" + contact.getEmail() + ":" + contact.getAddress() + ":" + contact.getPhone());
+//                 writer.newLine(); // Move to the next line
+//             }
+//             writer.close();
+//             System.out.println("Contacts saved successfully.");
+//         } catch (IOException e) {
+//             System.err.println("Error saving contacts: " + e.getMessage());
+//         }
+//     }
+// }

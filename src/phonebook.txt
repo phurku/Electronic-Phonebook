@@ -1,19 +1,37 @@
-phurku,098098098,phukukuku,nsw,12345
-phurku,0987654321,phurkuing,sydney,0000000
-phurku,098098098,phukukuku,nsw,12345
-phurku,098098098,phukukuku,nsw,12345
-phurku,0987654321,phurkuing,sydney,0000000
-phurku,098098098,phukukuku,nsw,12345
-suru,0111111,suru@gmail.com,nsw,1111111
-suru,000000,surususu,pppppp,0000000
-phkhkh,0909090,pklkkj,popop,0900000
-phurku,098098098,phukukuku,nsw,12345
-phurku,0987654321,phurkuing,sydney,0000000
-phurku,098098098,phukukuku,nsw,12345
-phurku,098098098,phukukuku,nsw,12345
-phurku,0987654321,phurkuing,sydney,0000000
-phurku,098098098,phukukuku,nsw,12345
-suru,0111111,suru@gmail.com,nsw,1111111
-suru,000000,surususu,pppppp,0000000
-phkhkh,0909090,pklkkj,popop,0900000
-balu,balu,,balu,balu
+name Posephine Esmerelda Bloggs
+birthday 13-05-1980
+phone 16549853
+email j.e.bloggs@gmail.com
+address 102 Smith St, Summer hill, NSW 2130
+
+name James Smith
+birthday 23-3-1989
+phone 98765425
+email j.smith@gmail.com
+address 60 Morris St, Summer Hill, NSW 2130
+
+name John Jones
+birthday 18-09-1968
+phone 13649852
+email j.jones@fanfare.com.au
+address 2 Fairmount St, Dulwich Hill, NSW 2203
+
+name James Smith
+birthday 23-3-1989
+address 60 Morris St, Summer Hill, NSW 2130
+
+name Posephine Esmerelda Bloggs
+birthday 13-05-1980
+phone 16549853
+email j.e.bloggs@gmail.com
+address 102 Smith St, Summer hill, NSW 2130
+
+address 2 Fairmount St, Dulwich Hill, NSW 2203
+name John Jones
+birthday 18-09-1968
+phone 13649852
+
+email robert.taylor@gmail.com
+address 36 Carrington St, Summer Hill, NSW 2130
+name Robert Taylor
+birthday 3-6-2008
