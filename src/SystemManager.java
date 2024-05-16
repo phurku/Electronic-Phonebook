@@ -10,108 +10,162 @@ public class SystemManager {
     }
 
     public void addContact(String details) throws IOException {
-        String[] parts = details.split(";"); // Splitting the details string by semicolon
-        if (parts.length >= 2) { // Checking if there are at least two parts (name and birthday)
-            String name = parts[0].trim(); // Extracting the name and trimming whitespace from the srting value
-            String birthday = parts[1].trim(); // Extracting the birthday and trimming whitespace
-            // Initializing variables as null
-            String address = null; 
-            String email = null; 
-            String phone = null; 
-
-            for (int i = 2; i < parts.length; i++) { // Iterating over the remaining parts
-                String detail = parts[i].trim(); // Trimming whitespace from the current part
-                if (isValidEmailAddress(detail)) { // Checking if the part is a valid email address
-                    email = detail; // Assigning the part to the email variable
-                } else if (isValidPhoneNumber(detail)) { // Checking if the part is a valid phone number
-                    phone = detail; // Assigning the part to the phone variable
+        String[] parts = details.split(";");
+        if (parts.length >= 2) {
+            String name = parts[0].trim();
+            String birthday = parts[1].trim();
+    
+            String address = null;
+            String email = null;
+            String phone = null;
+    
+            for (int i = 2; i < parts.length; i++) {
+                String detail = parts[i].trim();
+                if (isValidEmailAddress(detail)) {
+                    email = detail;
+                } else if (isValidPhoneNumber(detail)) {
+                    phone = detail;
                 } else {
-                    address = detail; // Assuming the part is an address
-                }
-            }
-
-            Contact contact = new Contact(name, birthday, email, address, phone); // Creating a new Contact object with the extracted details
-            contacts.add(contact); // Adding the new Contact object to the contacts list
-            System.out.println("Contact added: " + name); // Printing a success message with the name of the added contact
-            
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/phonebook.txt", true))) { // Opening the phonebook.txt file in append mode
-                writer.write(name); // Writing the name to the file
-                writer.newLine(); // Adding a new line
-                writer.write(birthday); // Writing the birthday to the file
-                writer.newLine(); // Adding a new line
-                if (email != null) { // Checking if the email is not null
-                    writer.write(email); // Writing the email to the file
-                    writer.newLine(); // Adding a new line
-                }
-                if (address != null) { // Checking if the address is not null
-                    writer.write(address); // Writing the address to the file
-                    writer.newLine(); // Adding a new line
-                }
-                if (phone != null) { // Checking if the phone number is not null
-                    writer.write(phone); // Writing the phone number to the file
-                    writer.newLine(); // Adding a new line
-                }
-                writer.write("---"); // Writing a separator
-                writer.newLine(); // Adding a new line
-                writer.flush(); // Flushing the writer to ensure all data is written to the file
-            } catch (IOException e) { // Catching any IOException that may occur
-                System.out.println("Error writing to file: " + e.getMessage()); // Printing an error message with the exception details
-            }
-        }
-    }
-
-    public void deleteContact(String details) {
-        String[] parts = details.split(";"); // Split the details string by semicolon
-        if (parts.length >= 2) { // Check if there are at least two parts (name and birthday)
-            String name = parts[0].trim(); // Extract the name and trim whitespace
-            String birthday = parts[1].trim(); // Extract the birthday and trim whitespace
-    
-            Iterator<Contact> iterator = contacts.iterator(); // Get an iterator for the contacts list
-            boolean contactFound = false; // Flag to track if the contact is found
-            while (iterator.hasNext()) { // Iterate over the contacts
-                Contact contact = iterator.next(); // Get the next contact
-                if (contact.getName().equalsIgnoreCase(name) && contact.getBirthday().equals(birthday)) { // Check if the contact matches the given name and birthday
-                    iterator.remove(); // Remove the contact from the list
-                    System.out.println("Contact deleted: " + name); // Print a success message
-                    contactFound = true; // Set the flag to true
-    
-                    // Remove the deleted contact from the phonebook.txt file
-                    try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/phonebook.txt", false))) { // Open the phonebook.txt file in write mode
-                        for (Contact c : contacts) { // Iterate over the remaining contacts
-                            writer.write(c.getName()); // Write the name
-                            writer.newLine(); // Add a new line
-                            writer.write(c.getBirthday()); // Write the birthday
-                            writer.newLine(); // Add a new line
-                            if (c.getEmail() != null) { // Check if the email is not null
-                                writer.write(c.getEmail()); // Write the email
-                                writer.newLine(); // Add a new line
-                            }
-                            if (c.getAddress() != null) { // Check if the address is not null
-                                writer.write(c.getAddress()); // Write the address
-                                writer.newLine(); // Add a new line
-                            }
-                            if (c.getPhone() != null) { // Check if the phone is not null
-                                writer.write(c.getPhone()); // Write the phone
-                                writer.newLine(); // Add a new line
-                            }
-                            writer.write("---"); // Write a separator
-                            writer.newLine(); // Add a new line
-                        }
-                        writer.flush(); // Flush the writer to ensure all data is written
-                    } catch (IOException e) { // Catch any IOException
-                        System.out.println("Error writing to phonebook.txt: " + e.getMessage()); // Print an error message with the exception details
+                    if (address == null) {
+                        address = detail;
+                    } else {
+                        address += " " + detail; // Append to the existing address
                     }
                 }
             }
     
-            if (!contactFound) { // If the contact was not found
-                System.out.println("Contact not found: " + name + ", " + birthday); // Print a message indicating the contact was not found
+            Contact contact = new Contact(name, birthday, email, address, phone);
+            contacts.add(contact);
+            System.out.println("Contact added: " + name);
+    
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/phonebook.txt", true))) {
+                writer.write(name);
+                writer.newLine();
+                writer.write(birthday);
+                writer.newLine();
+                if (email != null) {
+                    writer.write(email);
+                    writer.newLine();
+                }
+                if (address != null) {
+                    writer.write(address);
+                    writer.newLine();
+                }
+                if (phone != null) {
+                    writer.write(phone);
+                    writer.newLine();
+                }
+                writer.write("---");
+                writer.newLine();
+                writer.flush();
+            } catch (IOException e) {
+                System.out.println("Error writing to file: " + e.getMessage());
             }
-        } else {
-            System.out.println("Invalid delete instruction: " + details); // If the details string is invalid, print an error message
         }
     }
-    public void processQueryInstruction(String details) {
+    
+    
+    public void deleteContact(String details) {
+        String[] parts = details.split(";");
+        // System.out.println(details);
+        String name = parts[0].trim();
+        String birthday = parts.length > 1 ? parts[1].trim() : null;
+        // System.out.println(name);
+        if (name!= null) {
+            // Delete by name only
+            Iterator<Contact> iterator = contacts.iterator();
+            // System.out.println(name);
+
+            while (iterator.hasNext()) {
+                // System.out.println(name);
+
+                Contact contact = iterator.next();
+                System.out.println(contact.getName());
+                // System.out.println(name);
+
+                if (contact.getName()!=null) {
+                    // System.out.println(contact.getName());
+                    // System.out.println(iterator);
+
+                    iterator.remove();
+                    System.out.println("Contact deleted: " + contact.getName());
+                    
+                    updatePhonebookFile();
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/deletedRecord.txt", true))) {
+                        writer.write(name);
+                        writer.newLine();
+                        writer.write(birthday);
+                        writer.newLine();
+                        
+                        writer.write("---");
+                        writer.newLine();
+                        writer.flush();
+                    } catch (IOException e) {
+                        System.out.println("Error writing to file: " + e.getMessage());
+                    }
+                    return; // Exit the method after deleting the contact
+                }
+            }
+            System.out.println("Contact not found: " + name);
+        } else {
+            // Delete by name and birthday
+            Iterator<Contact> iterator = contacts.iterator();
+            while (iterator.hasNext()) {
+                Contact contact = iterator.next();
+                if (contact.getName().equalsIgnoreCase(name) && contact.getBirthday().equals(birthday)) {
+                    iterator.remove();
+                    System.out.println("Contact deleted: " + contact.getName() + ", " + contact.getBirthday());
+                    updatePhonebookFile();
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/deletedRecord.txt", true))) {
+                        writer.write(name);
+                        writer.newLine();
+                        writer.write(birthday);
+                        writer.newLine();
+                        
+                        writer.write("---");
+                        writer.newLine();
+                        writer.flush();
+                    } catch (IOException e) {
+                        System.out.println("Error writing to file: " + e.getMessage());
+                    }
+                    return; // Exit the method after deleting the contact
+                }
+            }
+            System.out.println("Contact not found: " + name + ", " + birthday);
+        }
+     
+    }
+
+ private void updatePhonebookFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/phonebook.txt", false))) {
+            for (Contact c : contacts) {
+                writer.write(c.getName());
+                writer.newLine();
+                writer.write(c.getBirthday());
+                writer.newLine();
+                if (c.getEmail() != null) {
+                    writer.write(c.getEmail());
+                    writer.newLine();
+                }
+                if (c.getAddress() != null) {
+                    writer.write(c.getAddress());
+                    writer.newLine();
+                }
+                if (c.getPhone() != null) {
+                    writer.write(c.getPhone());
+                    writer.newLine();
+                }
+                writer.write("---");
+                writer.newLine();
+            }
+            writer.flush();
+        } catch (IOException e) {
+            System.out.println("Error writing to phonebook.txt: " + e.getMessage());
+        }
+    }
+    
+    
+   public void processQueryInstruction(String details) {
         String[] parts = details.split(" "); // Split the details string by space
         if (parts.length == 2) { // Check if there are exactly two parts (key and value)
             String key = parts[0].trim().toLowerCase(); // Extract the key and convert it to lowercase
@@ -243,19 +297,21 @@ public class SystemManager {
             System.out.println("Error loading contacts: " + e.getMessage()); // Print an error message with the exception details
         }
     }
-    private boolean isValidEmailAddress(String email) {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"; // Regular expression pattern for email validation
-        Pattern pattern = Pattern.compile(emailRegex); // Compile the regular expression pattern
-        return pattern.matcher(email).matches(); // Check if the email matches the pattern and return the result
-    }
-    private boolean isValidPhoneNumber(String phone) {
-        String phoneRegex = "^(\\+\\d{1,3}[- ]?)?\\d{1,4}?[- ]?\\d{3,4}[- ]?\\d{3,4}$"; // Regular expression pattern for phone number validation
-        Pattern pattern = Pattern.compile(phoneRegex); // Compile the regular expression pattern
-        return pattern.matcher(phone).matches(); // Check if the phone number matches the pattern and return the result
-    }
     
+   
+    private boolean isValidEmailAddress(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        return pattern.matcher(email).matches();
+    }
+
+    private boolean isValidPhoneNumber(String phone) {
+        String phoneRegex = "^(\\+\\d{1,3}[- ]?)?\\d{1,4}?[- ]?\\d{3,4}[- ]?\\d{3,4}$";
+        Pattern pattern = Pattern.compile(phoneRegex);
+        return pattern.matcher(phone).matches();
+    }
+
     private void printContactDetails(Contact contact) {
         System.out.println("Contact found: " + contact.getName() + ", " + contact.getBirthday() + ", " + contact.getEmail() + ", " + contact.getAddress() + ", " + contact.getPhone());
     }
-    
 }

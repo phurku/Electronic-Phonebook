@@ -4,6 +4,7 @@ public class MainSystem {
     private static SystemManager contact; // Declaring a private static variable 'contact' of type SystemManager
 
     public static void main(String[] args) {
+        
         contact = new SystemManager(); // Creating a new instance of SystemManager and assigning it to 'contact'
 
         try {
@@ -15,8 +16,6 @@ public class MainSystem {
             String instruction;
             while ((instruction = reader.readLine()) != null) { // Reading each line of the file
                 processInstruction(instruction); // Calling the processInstruction method with the current instruction
-                // Printing instructions from instructions.txt file in console
-                System.out.println(instruction); // Printing the instruction to the console
             }
             reader.close(); // Closing the BufferedReader
 
@@ -44,7 +43,8 @@ public class MainSystem {
                     break;
                 case "delete":
                     if (parts.length > 1) { // Checking if there are more than one part
-                        String details = String.join(" ", parts).substring(6); // Getting the details by joining the parts after the first 6 characters
+                        String details = String.join(" ", parts).substring(7); // Getting the details by joining the parts after the first 6 characters
+                        // System.out.print(details);
                         contact.deleteContact(details); // Calling the deleteContact method with the details
                     } else {
                         System.out.println("Invalid delete instruction: " + instruction); // Printing an error message if the delete instruction is invalid
@@ -53,7 +53,7 @@ public class MainSystem {
                 case "query":
                     if (parts.length > 1) { // Checking if there are more than one part
                         String details = String.join(" ", parts).substring(6); // Getting the details by joining the parts after the first 6 characters
-                        contact.processQueryInstruction(details); // Calling the processQueryInstruction method with the details
+                        // contact.processQueryInstruction(details); // Calling the processQueryInstruction method with the details
                     } else {
                         System.out.println("Invalid query instruction: " + instruction); // Printing an error message if the query instruction is invalid
                     }
